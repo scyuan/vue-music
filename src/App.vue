@@ -1,40 +1,67 @@
 <template>
   <div id="app">
-    <div ref='header' class="music-header">
-      <i class="icon icon-sidebar" v-on:click='openSide()'>&#xe607;</i>
-      <div class="search-area"></div>
-    </div>
-    <div ref='sidebar' class="sidebar">
-      
-    </div>
-    <router-view></router-view>
+    <musicheader></musicheader>
+    <router-view v-on:listenplay='play'></router-view>
+    <musicbottom v-on:open='open'></musicbottom>
+    <play ref='play'></play>
+   <!--  <currentlist></currentlist>  -->
   </div>
 </template>
 
 <script>
+import musicheader from './components/musicheader.vue'
+import musicbottom from './components/musicbottom.vue'
+import play from './page/play.vue'
+import currentlist from './components/currentlist.vue'
 export default {
   name: 'app',
   methods:{
-    openSide(){
-        this.$refs.header.className = 'music-header header_left';
-        this.$refs.sidebar.className = 'sidebar sidebar_show';
+    
+  },
+  methods:{
+    play(id){
+      this.$refs.play.showMe(id);
+    },
+    open(){
+      this.$refs.play.showMe();
     }
+  },
+  components:{
+    musicheader,musicbottom,play,currentlist,play
   }
 }
 </script>
 
 <style>
-div,body,*{
+.fade-enter,.fade-leave-to{
+  opacity: 0;
+}
+.fade-enter-to,.fade-leave{
+  opacity: 1;
+}
+.fade-enter-active,.fade-leave-active{
+  transition: all linear 0s;
+}
+div,body,*,ul,p,li{
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
+  list-style: none;
 }
 @font-face {
   font-family: 'iconfont';  /* project id 478040 */
-  src: url('//at.alicdn.com/t/font_478040_p58jr1hhz01qncdi.eot');
-  src: url('//at.alicdn.com/t/font_478040_p58jr1hhz01qncdi.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_478040_p58jr1hhz01qncdi.woff') format('woff'),
-  url('//at.alicdn.com/t/font_478040_p58jr1hhz01qncdi.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_478040_p58jr1hhz01qncdi.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.eot');
+  src: url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.woff') format('woff'),
+  url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.svg#iconfont') format('svg');
+}
+.clearfix:after{
+  content: ".";
+  height: 0;
+  clear: both;
+  display: block;
+  visibility: hidden;
 }
 .icon{
   font-family: 'iconfont';
@@ -48,38 +75,5 @@ div,body,*{
   overflow: hidden;
 }
 
-.music-header{
-  height: 45px;
-  width: 100%;
-  background: red;
-  transition: all 0.6s;
-  position: relative;
-  left: 0;
-}
-.header_left{
-  left: 50%;
-}
-.icon-sidebar{
-  height: 45px;
-  width: 45px;
-  display: block;
-  text-align: center;
-  line-height: 45px;
-  font-size: 20px;
-  color: #fff;
-}
-.sidebar{
-  background: url('./assets/img/timg.jpg');
-  background-size: cover;
-  position: fixed;
-  z-index: -1;
-  width: 50%;
-  height: 100%;
-  top: 0;
-  left: -50%;
-  transition: all 0.3s;
-}
-.sidebar_show{
-  left: 0;
-}
+
 </style>

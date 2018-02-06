@@ -1,0 +1,367 @@
+<template>
+<transition name='slide'>
+	<div class="play" v-show='show'> 
+		<div class="aaa">
+			<audio id='audio' v-bind:src="songUrl" autoplay @canplaythrough='canPlay()' @timeupdate='update()' @ended='end()'></audio>
+			<div class="bg-img"></div>
+			<div class="wrap-content">
+				<div class="header">
+					<div class="back" @click='back()'><i class="icon">&#xe622;</i></div>
+					<div class="title">
+						<p class="name">{{name}}</p>
+						<p class="singer">{{singer}}</p>
+					</div>
+					<div class="back"></div>
+				</div>
+				<div class="content" ref='content'>
+					<div class="stick">
+						<div>
+							<img id='stick' src="../assets/img/stick_bg.png" alt="">
+						</div>
+					</div>
+					<div class="changpian">
+						<img v-bind:src="bg" alt="">
+					</div>
+				</div>
+				<div class="do-area">
+					<div class="do-wrap">
+						<div class="progress">
+							<span class="start_time">{{start_time}}</span>
+							<div class="line"><div class="line-played"></div></div>
+							<span class="end_time">{{end_time}}</span>
+						</div>
+						<div class="playpause">
+							<i class="icon" v-on:click='changeCycleType()'>&#xe64b;</i>
+							<i class="icon" v-on:click='prev()'>&#xe610;</i>
+							<i class="icon" v-html='state' v-on:click='playOrPause()'></i>
+							<i class="icon" v-on:click='next()'>&#xe611;</i>
+							<i class="icon" v-on:click='getCurrentList()'>&#xe72f;</i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="state">{{freshState}}</div>
+	</div>
+	</transition>
+</template>
+
+<script>
+	export default{
+		data:function(){
+			return {
+				id:0,
+				show:false,
+				play:'&#xe668;',
+				pause:'&#xe613',
+				state:"",
+				name:'',
+				bg:'',
+				singer:'',
+				time:0,
+				start_time:'00:00',
+				end_time:'',
+				songUrl:''
+			}
+		},
+		computed:{
+			freshState(){
+				var newState = this.$store.state.currState;
+				if(document.getElementById('audio') == undefined){
+					return newState;
+				}
+				//在播放
+				if(newState){
+					document.getElementById('audio').play();
+					this.state = this.pause
+					document.getElementById('stick').className = '';
+					document.getElementsByClassName('changpian')[0].style.animationPlayState='running';
+				}else{
+					document.getElementById('audio').pause();
+					this.state = this.play
+					document.getElementById('stick').className = 'pause';
+					document.getElementsByClassName('changpian')[0].style.animationPlayState='paused';
+				}
+				return newState;
+			}
+		},
+		methods:{
+			showMe(id){
+				if(id === undefined) {
+					this.show = true;
+					return ;
+				}
+				this.show = true;
+				this.id = id;
+				this.getSong();
+			},
+			hideMe(){
+				this.show = false;
+			},
+			back(){
+				this.hideMe();
+			},
+			end(){
+				document.getElementsByClassName('changpian')[0].style.animationPlayState='paused';
+				document.getElementById('stick').className = 'pause';
+			},
+			update(){
+				var time = document.getElementById('audio').currentTime;
+				//更新已播放时间
+				this.start_time = this.secondeToTime(time);
+				//更新进度
+				var rate = time*1000/this.time;
+
+				document.getElementsByClassName('line-played')[0].style.width=rate*236+'px';
+			},
+			canPlay(){
+				this.state = this.pause;
+			},
+			playOrPause(){
+
+				if(this.state === this.play){
+					document.getElementById('audio').play();
+					this.state = this.pause
+					this.$store.commit('setCurrState',true);
+					document.getElementById('stick').className = '';
+					document.getElementsByClassName('changpian')[0].style.animationPlayState='running';
+				}else{
+					document.getElementById('audio').pause();
+					this.state = this.play
+					this.$store.commit('setCurrState',false);
+					document.getElementById('stick').className = 'pause';
+					document.getElementsByClassName('changpian')[0].style.animationPlayState='paused';
+				}
+			},
+			secondeToTime(seconde){
+				
+				var minutes = Math.floor(seconde/60);
+				var s = Math.floor(seconde%60);
+				if(minutes<10){
+					minutes = '0' + minutes;
+				}
+				if(s < 10){
+					s = '0' + s;
+				}
+				return minutes+':'+s;
+			},
+			getSong(){
+				//获取歌曲
+				this.$http.get('http://localhost:3000/song/detail?ids='+this.id).then(res=>{
+					console.log(res.data.songs[0])
+					this.name = res.data.songs[0].name;
+					this.bg = res.data.songs[0].al.picUrl;
+					document.getElementsByClassName('bg-img')[0].style.backgroundImage='url('+this.bg+')';
+					this.singer = res.data.songs[0].ar[0].name;
+					this.time = res.data.songs[0].dt;
+					this.end_time = this.secondeToTime(res.data.songs[0].dt/1000);
+
+					this.$store.commit('setCurrSong',{url:res.data.songs[0].al.picUrl,name:res.data.songs[0].name,singer:res.data.songs[0].ar[0].name});
+
+					//获取歌曲url,加载歌曲
+					this.$http.get('http://localhost:3000/music/url?id='+res.data.songs[0].id)
+					.then(res=>{
+						console.log(res.data.data[0].url);
+						this.songUrl = res.data.data[0].url;
+						this.state = this.pause;
+						this.$store.commit('setCurrState',true);
+					},error=>{
+						console.log(error);
+					})
+				},error=>{
+					console.log(error);
+				})
+			}
+		},
+		
+		mounted:function() {
+			//默认是暂停，因为要先加载歌曲
+			this.state = this.play;
+
+			var height = window.screen.height;
+
+			this.$refs.content.style.height = (height-208)+'px';
+
+			document.getElementsByClassName('wrap-content')[0].addEventListener('touchmove',function(e){
+				e.preventDefault();
+			},false)
+		}
+	}
+</script>
+<style scoped>
+.slide-enter,.slide-leave-to{
+	transform: translateX(100%);
+}
+.slide-leave,.slide-enter-to{
+	transform: translateX(0);
+}
+.slide-enter-active,.slide-leave-active{
+	transition: all 0.3s;
+}
+.play{
+	position: fixed;
+	z-index: 100;
+	width: 100%;
+	height: 100%;
+	top: 0;
+}
+.aaa{
+	overflow: hidden;
+}
+.bg-img{
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-image: url(../assets/img/timg.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: auto 95%;
+	transform: scale(1.2);
+	filter: blur(20px);
+}
+.wrap-content{
+	position: relative;
+
+	height: 100%;
+	background-color: rgba(0,0,0,0.25);
+}
+.header{
+	height: 48px;
+	color: #fff;
+	border-bottom: 1px solid #fff;
+}
+.back{
+	width: 48px;
+	line-height: 48px;
+	text-align: center;
+}
+.back,.title{
+	float: left;
+	height: 48px;
+
+}
+.state{
+	position: absolute;
+	top: 1000000px;
+}
+.title{
+	padding-top: 4px;
+	width: calc(100% - 96px);
+	text-align: center;
+}
+.singer{
+	font-size: 12px;
+}
+.content{
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.stick{
+	position: absolute;
+	height: 170px;
+	width: 300px;
+	top: 0;
+	overflow: hidden;
+}
+.stick div{
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+.stick img{
+	position: absolute;
+	top: -20px;
+	left: 130px;
+	height: 100%;
+	width: auto;
+	z-index: 10;
+	transition: all 0.3s;
+	transform-origin: 20px 21px;
+}
+.pause{
+	transform: rotate(-20deg);
+	
+}
+.changpian{
+	width: 300px;
+	height: 300px;
+	border-radius: 150px;
+	overflow: hidden;
+	background-image: url(../assets/img/placeholder_disk_play_song.png);
+	background-size: 100% 100%;
+	display: flex;align-items: center;
+	justify-content: center;
+	animation: round linear infinite 40s;
+}
+.changpian img{
+	width: 220px;
+	height: 220px;
+	border-radius: 110px;
+}
+@keyframes round{
+	from{transform: rotate(0deg)}
+    to{transform: rotate(360deg)}
+}
+.do-area{
+	height: 160px;
+}
+.do-wrap{
+	width: 300px;
+	height: 100%;
+	margin: 0 auto;
+	padding: 20px 0px 10px 0px;
+}
+.progress{
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.line{
+	width: 236px;
+	height: 1px;
+	background: #fff;
+	position: relative;
+}
+.line-played{
+	height: 1px;
+	width: 200px;
+	background: red;
+	top: 0;
+	left: 0;
+}
+.start_time{
+	padding-right: 6px;
+}
+.end_time{
+	padding-left: 5px;
+}
+.start_time,.end_time{
+	display: inline-block;
+	width: 32px;
+	color: #fff;
+	font-size: 12px;
+	float: left;
+}
+.playpause{
+	height: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.playpause i{
+	flex: 1;
+	color: #fff;
+	text-align: center;
+	font-size: 26px;
+}
+.playpause i:nth-child(1){
+	font-size: 30px;
+}
+.playpause i:nth-child(3){
+	font-size: 38px;
+}
+</style>
