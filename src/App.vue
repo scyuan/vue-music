@@ -2,7 +2,7 @@
   <div id="app">
     <musicheader></musicheader>
     <router-view v-on:listenplay='play'></router-view>
-    <musicbottom v-on:open='open'></musicbottom>
+    <musicbottom v-on:open='open' v-on:changesong="changesong"></musicbottom>
     <play ref='play'></play>
    <!--  <currentlist></currentlist>  -->
   </div>
@@ -24,6 +24,9 @@ export default {
     },
     open(){
       this.$refs.play.showMe();
+    },
+    changesong(id){
+      this.$refs.play.playWitch(id);
     }
   },
   components:{
@@ -50,11 +53,11 @@ div,body,*,ul,p,li{
 }
 @font-face {
   font-family: 'iconfont';  /* project id 478040 */
-  src: url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.eot');
-  src: url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.woff') format('woff'),
-  url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_478040_8zl7c4e2onu3di.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_478040_6agaicohxoclq5mi.eot');
+  src: url('//at.alicdn.com/t/font_478040_6agaicohxoclq5mi.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_478040_6agaicohxoclq5mi.woff') format('woff'),
+  url('//at.alicdn.com/t/font_478040_6agaicohxoclq5mi.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_478040_6agaicohxoclq5mi.svg#iconfont') format('svg');
 }
 .clearfix:after{
   content: ".";

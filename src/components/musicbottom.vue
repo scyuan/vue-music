@@ -8,16 +8,18 @@
 					<p class="singer">{{getSinger}}</p>
 				</div>
 				<div class="do">
-					<i class="icon icon-prev">&#xe610;</i>
+					<i class="icon icon-prev" @click='prev()'>&#xe610;</i>
 					<i class="icon icon-play" v-html='getIcon' @click='changeState()'></i>
-					<i class="icon">&#xe611;</i>
-					<i class="icon icon-list">&#xe72f;</i>
+					<i class="icon" @click='next()'>&#xe611;</i>
+					<i class="icon icon-list" @click='getCurrentList()'>&#xe72f;</i>
 				</div>
 			</div>
 		</div>
+		<currentlist ref='currentlist' v-on:changesong='changesong'></currentlist>
 	</div>
 </template>
 <script>
+import currentlist from './currentlist.vue'
 	export default{
 		data:function(){
 			return {
@@ -44,6 +46,31 @@
 			}
 		},
 		methods:{
+			prev(){
+				var list = this.$store.state.currList;
+				var index = this.$store.state.currIndex;
+				if(index == 0)
+					index = list.length-1;
+				else
+					index--;
+				this.$emit("changesong",list[index].id);
+
+			},
+			next(){
+				var list = this.$store.state.currList;
+				var index = this.$store.state.currIndex;
+				if(index == list.length - 1)
+					index = 0;
+				else
+					index++;
+				this.$emit("changesong",list[index].id);
+			},
+			changesong(id){
+				this.$emit('changesong',id)
+			},
+			getCurrentList(){
+				this.$refs.currentlist.showMe();
+			},
 			open(){
 				console.log('open');
 				this.$emit('open','no data');
@@ -59,6 +86,9 @@
 				}
 			}
 		},
+		components:{
+			currentlist
+		}
 
 	}
 </script>

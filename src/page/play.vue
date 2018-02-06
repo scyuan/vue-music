@@ -6,7 +6,7 @@
 			<div class="bg-img"></div>
 			<div class="wrap-content">
 				<div class="header">
-					<div class="back" @click='back()'><i class="icon">&#xe622;</i></div>
+					<div class="back" @click='hideMe()'><i class="icon">&#xe622;</i></div>
 					<div class="title">
 						<p class="name">{{name}}</p>
 						<p class="singer">{{singer}}</p>
@@ -42,11 +42,12 @@
 			</div>
 		</div>
 		<div class="state">{{freshState}}</div>
+		<currentlist ref='currentlist' v-on:changesong='playWitch'></currentlist>
 	</div>
 	</transition>
 </template>
-
 <script>
+import currentlist from '../components/currentlist.vue'
 	export default{
 		data:function(){
 			return {
@@ -63,6 +64,9 @@
 				end_time:'',
 				songUrl:''
 			}
+		},
+		components:{
+			currentlist
 		},
 		computed:{
 			freshState(){
@@ -86,6 +90,36 @@
 			}
 		},
 		methods:{
+			// 上一首
+			prev(){
+				var list = this.$store.state.currList;
+				var index = this.$store.state.currIndex;
+				if(index == 0)
+					index = list.length-1;
+				else
+					index--;
+				this.playWitch(list[index].id);
+
+			},
+			// 下一首
+			next(){
+				var list = this.$store.state.currList;
+				var index = this.$store.state.currIndex;
+				if(index == list.length - 1)
+					index = 0;
+				else
+					index++;
+				this.playWitch(list[index].id);
+			},
+			// 获取当前播放列表
+			getCurrentList(){
+				this.$refs.currentlist.showMe();
+			},
+			/*
+			  打开播放页（也就是当前play.vue组件），
+			  1.当传入歌曲ID时：表示第一次打开当前页面，所以此时需要加载歌曲
+			  2.当没有传入歌曲ID时：表示播放页面从后台显示，这时不需要加载歌曲
+			 */
 			showMe(id){
 				if(id === undefined) {
 					this.show = true;
@@ -93,18 +127,27 @@
 				}
 				this.show = true;
 				this.id = id;
+
 				this.getSong();
 			},
+			// 更换歌曲，不需要调用this.show=true;
+			playWitch(id){
+				this.id = id;
+				this.getSong();
+			},
+			// 退出当前页面
 			hideMe(){
 				this.show = false;
 			},
-			back(){
-				this.hideMe();
-			},
+			// 监听当前播放歌曲播放结束，将状态置为暂停
 			end(){
-				document.getElementsByClassName('changpian')[0].style.animationPlayState='paused';
+				this.state = this.play
+				this.$store.commit('setCurrState',false);
 				document.getElementById('stick').className = 'pause';
+				document.getElementsByClassName('changpian')[0].style.animationPlayState='paused';
+				this.next();
 			},
+			// 播放，监听歌曲时间更新
 			update(){
 				var time = document.getElementById('audio').currentTime;
 				//更新已播放时间
@@ -117,6 +160,7 @@
 			canPlay(){
 				this.state = this.pause;
 			},
+			// 播放或者暂停
 			playOrPause(){
 
 				if(this.state === this.play){
@@ -133,8 +177,8 @@
 					document.getElementsByClassName('changpian')[0].style.animationPlayState='paused';
 				}
 			},
+			// 将秒转为MM:SS形式
 			secondeToTime(seconde){
-				
 				var minutes = Math.floor(seconde/60);
 				var s = Math.floor(seconde%60);
 				if(minutes<10){
@@ -145,6 +189,7 @@
 				}
 				return minutes+':'+s;
 			},
+			// 通过歌曲ID获取歌曲信息，并根据url加载歌曲
 			getSong(){
 				//获取歌曲
 				this.$http.get('http://localhost:3000/song/detail?ids='+this.id).then(res=>{
@@ -165,6 +210,29 @@
 						this.songUrl = res.data.data[0].url;
 						this.state = this.pause;
 						this.$store.commit('setCurrState',true);
+
+						//添加到正在播放列表，如果已经存在，则不添加
+						var exist = false;
+						var list = this.$store.state.currList;
+						for(let i=0;i<list.length;i++){
+							if(list[i].id == this.id){
+								exist = true;
+								this.$store.commit('setCurrIndex',i);
+								break;
+							}
+						}
+						//不存在
+						if(!exist){
+							this.$store.commit("setCurrList",{id:this.id,name:this.name,singer:this.singer});
+							this.$store.commit('setCurrIndex',list.length-1);
+						}
+
+						//播放状态
+						this.state = this.pause
+						this.$store.commit('setCurrState',true);
+						document.getElementById('stick').className = '';
+						document.getElementsByClassName('changpian')[0].style.animationPlayState='running';
+					
 					},error=>{
 						console.log(error);
 					})

@@ -18,7 +18,13 @@ const state = {
 		singer:'无'
 	},
 	//当前状态，play or pause
-	currState: PAUSE
+	currState: PAUSE,
+	//当前播放列表
+	currList:[
+		
+	],
+	//当前播放下标，默认是0
+	currIndex:0
 }
 const mutations = {
 	setRecommendSongIndex(state,newIndex){
@@ -35,7 +41,15 @@ const mutations = {
 			state.currState = PLAY
 		else
 			state.currState = PAUSE
+	},
+	//更新播放课表
+	setCurrList(state,newSong){
+		state.currList.push(newSong);
+	},
+	setCurrIndex(state,newIndex){
+		state.currIndex = newIndex;
 	}
+
 }
 export default new Vuex.Store({
 	state,mutations
