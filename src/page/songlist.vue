@@ -66,7 +66,7 @@ import gedansongitem from '../components/gedansongitem'
 		mounted:function(){
 			console.log(this.gedanId);
 			var header = document.getElementById('header');
-			window.addEventListener('scroll',function(){
+			document.addEventListener('scroll',function(){
 				
 				if(window.pageYOffset >= 204){
 					if(header.className.indexOf('white')===-1){
@@ -133,6 +133,7 @@ import gedansongitem from '../components/gedansongitem'
 .gedan-info{
 	background-color: rgba(0,0,0,0.2);
 	padding: 50px 15px 5px 15px;
+	z-index: 20;
 }
 .header{
 	height: 46px;

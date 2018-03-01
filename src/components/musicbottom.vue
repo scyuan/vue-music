@@ -112,7 +112,7 @@ import currentlist from './currentlist.vue'
 	position: absolute;
 	top: -10px;
 	left: -55px;
-	border-radius: 20px;
+	border-radius: 22px;
 	border:2px solid #ee4000;
 }
 .currSongInfo,.wrap,.info,.do{

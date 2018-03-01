@@ -31,7 +31,7 @@
 		},
 		methods:{
 			play(id){
-				
+				this.$emit('changesong',id);
 			},
 			moreIcon(index){
 				var oDo = document.getElementsByClassName('do-icon');

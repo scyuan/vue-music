@@ -272,6 +272,7 @@ import currentlist from '../components/currentlist.vue'
 	width: 100%;
 	height: 100%;
 	top: 0;
+	overflow: hidden;
 }
 .aaa{
 	overflow: hidden;

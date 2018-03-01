@@ -20,7 +20,7 @@
 				</div>
 				<ul class="gedan-content clearfix">
 					<li v-for='item in gedanList' >
-						<img :src="item.picUrl" v-on:click='gotogedan(item.id)' alt="">
+						<img v-lazy="item.picUrl" v-on:click='gotogedan(item.id)' alt="">
 						<p class="gedan-name">{{item.name}}</p>
 						<span class="playCount"><i class="icon">&#xe63f;</i>{{parseToWan(item.playCount)}}</span>
 					</li>
@@ -35,7 +35,7 @@
 				</div>
 				<ul class="song-list">
 					<li v-for='(item,index) in songList'>
-						<songitem v-bind:song='item' v-bind:index='index'></songitem>
+						<songitem v-bind:song='item' v-bind:index='index' v-on:changesong='changesong'></songitem>
 					</li>
 				</ul>
 			</div>
@@ -75,7 +75,7 @@ import 'swiper/dist/css/swiper.css'
 	        swiper() {  
 	            return this.$refs.mySwiper.swiper;  
 	        },
-	    },  
+	    }, 
 	    methods:{
 	    	parseToWan(int){
 	        	if(int>10000){
@@ -86,6 +86,9 @@ import 'swiper/dist/css/swiper.css'
 	        },
 	        gotogedan(id){
 	        	this.$router.push({path:'/songlist',query:{gedanId:id}});
+	        },
+	        changesong(id){
+	        	this.$emit('listenplay',id);
 	        }
 	    },
 		mounted:function(){
@@ -177,10 +180,10 @@ import 'swiper/dist/css/swiper.css'
 	position: absolute;
 	background: rgba(0,0,0,0.5);
 	color: #fff;
-	padding: 4px 8px;
+	padding: 2px 6px;
 	border-radius: 50px;
-	top: 10px;
-	right: 10px;
+	top: 8px;
+	right: 3px;
 	font-size: 12px;
 }
 .song-list li{
