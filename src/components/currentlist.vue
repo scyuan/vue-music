@@ -51,9 +51,14 @@
 			}
 		},
 		mounted(){
-			// document.getElementsByClassName('currentlist')[0].addEventListener('touchmove',function(e){
-			// 	e.preventDefault();
-			// },false)
+			 document.getElementsByClassName('currentlist')[0].addEventListener('touchmove',function(e){
+			 		console.log('1111');
+			 		e.preventDefault();
+			 },false)
+			 document.getElementsByClassName('currentlist')[1].addEventListener('touchmove',function(e){
+			 		console.log('1111');
+			 		e.preventDefault();
+			 },false)
 		}
 	}
 </script>

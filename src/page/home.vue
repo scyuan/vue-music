@@ -19,8 +19,11 @@
 					</div>
 				</div>
 				<ul class="gedan-content clearfix">
-					<li v-for='item in gedanList' >
-						<img v-lazy="item.picUrl" v-on:click='gotogedan(item.id)' alt="">
+					<div class="gedan-loading" ref='gedan_loading'  v-show='gedan_loading_show'>
+						<scale-loader :loading="loading" :color="color" :height="height" :width="width"></scale-loader>
+					</div>
+					<li v-for='(item,index) in gedanList' >
+						<img v-lazy="item.picUrl" v-on:load='imgload(index,item.picUrl)' v-on:click='gotogedan(item.id)' alt="">
 						<p class="gedan-name">{{item.name}}</p>
 						<span class="playCount"><i class="icon">&#xe63f;</i>{{parseToWan(item.playCount)}}</span>
 					</li>
@@ -46,10 +49,14 @@
 <script>
 import songitem from '../components/songitem.vue'
 import {swiper,swiperSlide} from 'vue-awesome-swiper'
+import {Socket} from 'vue-loading-spinner'
 import 'swiper/dist/css/swiper.css'
+import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	export default{
 		data:function(){
 			return {
+				color:'#f01414',
+				gedan_loading_show:true,
 				imgUrls:[],
 				gedanList:[],
 				songList:[],
@@ -69,7 +76,7 @@ import 'swiper/dist/css/swiper.css'
 			}
 		},
 		components:{
-			songitem,swiper,swiperSlide
+			songitem,swiper,swiperSlide,Socket,ScaleLoader
 		},
 		computed:{  
 	        swiper() {  
@@ -89,12 +96,25 @@ import 'swiper/dist/css/swiper.css'
 	        },
 	        changesong(id){
 	        	this.$emit('listenplay',id);
+	        },
+	        imgload(index,url){
+	        	var img = new Image();
+	        	img.src = url;
+	        	if(img.complete&&index==5){
+	        		console.log(url+'加载完成');
+	        		this.gedan_loading_show = false;
+	        	}
+	        	
 	        }
 	    },
 		mounted:function(){
+
+			var width = screen.width;
+	    	this.$refs.gedan_loading.style.height = (width/3 + 34) * 2 + 'px';
+
 			var _this = this;
 			//获取轮播图片---暂时还不能自动播放
-			this.$http.get("http://localhost:3000/banner").then(response => {
+			this.$http.get("http://120.79.167.62:3000/banner").then(response => {
 			    
 			    var banners = response.data.banners;
 			    banners.map(function(ele){
@@ -106,26 +126,37 @@ import 'swiper/dist/css/swiper.css'
 			    console.log(error);
 			})
 			//获取歌单数据
-			this.$http.get('http://localhost:3000/personalized').then(res=>{
+			this.$http.get('http://120.79.167.62:3000/personalized').then(res=>{
 				//console.log(res.data);
 				_this.gedanList = res.data.result.slice(0,6);
 				console.log(_this.gedanList);
+				
 			},error=>{
 				console.log(error);
 			})
 			//获取歌曲数据
-			this.$http.get("http://localhost:3000/personalized/newsong").then(res=>{
+			this.$http.get("http://120.79.167.62:3000/personalized/newsong").then(res=>{
 				console.log(res.data.result);
 				_this.songList = res.data.result;
+	
 			},error=>{
 				console.log(error)
 			})
+			
 			
 		}
 	}
 </script>
 <style scoped>
-
+.gedan-loading{
+	width: 100%;
+	position: absolute;
+	z-index: 100;
+	background: #fff;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 .home{
 	padding-bottom: 40px;
 	padding-top: 72px;
@@ -164,14 +195,19 @@ import 'swiper/dist/css/swiper.css'
 	line-height: 28px;
 	font-size: 15px;
 }
+.gedan-content{
+	position: relative;
+}
 .gedan-content li{
 	position: relative;
 	width: 33.33%;
 	float: left;
-	padding: 5px 0.5px 0px 0.5px;
+	padding:0px 0.5px;
 }
 .gedan-content li img{
-	width: 100%
+	width: 100%;
+	height: auto;
+	vertical-align: middle;
 }
 .gedan-content li p{
 	font-size: 12px;
@@ -182,9 +218,12 @@ import 'swiper/dist/css/swiper.css'
 	color: #fff;
 	padding: 2px 6px;
 	border-radius: 50px;
-	top: 8px;
+	top: 3px;
 	right: 3px;
 	font-size: 12px;
+}
+.playCount i{
+	margin-right: 3px;
 }
 .song-list li{
 	height: 50px;

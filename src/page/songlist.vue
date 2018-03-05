@@ -1,15 +1,14 @@
 <template>
-<transition name='slide'>
 	<div class="songlist">
 		<div class="img-wrap">
 			<div class="gedan-img" ref='gedanimg'></div>
 		</div>
 		
 		<div class="gedan-info">
-			<img v-bind:src="gedanimg" alt="" class="gedan_avator">
+			<img v-lazy='gedanimg' alt="" class="gedan_avator">
 			<div class="wenzi">
 				<p>{{name}}</p>
-				<p>from &nbsp;{{creator_name}}<span class="avator" ref='avator'></span></p>
+				<p>{{creator_name}}<span class="avator" ref='avator'></span></p>
 			</div>
 			<div class="do">
 				<div class="do-item"><i class="icon">&#xe6e0;</i><p>{{recommendCount}}</p></div>
@@ -34,7 +33,6 @@
 			</li>
 		</ul>
 	</div>
-</transition>
 </template>
 <script>
 import gedansongitem from '../components/gedansongitem'
@@ -82,7 +80,7 @@ import gedansongitem from '../components/gedansongitem'
 				console.log(res.data.result);
 				_this.name = res.data.result.name;
 				_this.gedanimg = res.data.result.coverImgUrl;
-				_this.creator_name = res.data.result.creator.nickname;
+				_this.creator_name = 'from  '+res.data.result.creator.nickname;
 				_this.$refs.gedanimg.style.backgroundImage='url('+res.data.result.coverImgUrl+')'
 				_this.$refs.avator.style.backgroundImage='url('+res.data.result.creator.avatarUrl+')'
 				_this.recommendCount = res.data.result.subscribedCount;
