@@ -1,6 +1,7 @@
 <template>
 	<div class="home" ref='home'>
 		<div class="lunbo">
+			<p>正在加载图片</p>
 			<swiper :options="swiperOption"  ref="mySwiper">  
 			      
 			    <swiper-slide v-for='img in imgUrls'> 
@@ -18,9 +19,9 @@
 						<span>每日推荐歌单</span>
 					</div>
 				</div>
-				<ul class="gedan-content clearfix">
+				<ul class="gedan-content clearfix" ref='gedan_content'>
 					<div class="gedan-loading" ref='gedan_loading'  v-show='gedan_loading_show'>
-						<scale-loader :loading="loading" :color="color" :height="height" :width="width"></scale-loader>
+						<scale-loader :color="color"></scale-loader>
 					</div>
 					<li v-for='(item,index) in gedanList' >
 						<img v-lazy="item.picUrl" v-on:load='imgload(index,item.picUrl)' v-on:click='gotogedan(item.id)' alt="">
@@ -111,10 +112,11 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 
 			var width = screen.width;
 	    	this.$refs.gedan_loading.style.height = (width/3 + 34) * 2 + 'px';
+	    	this.$refs.gedan_content.style.height = (width/3 + 34) * 2 + 'px';
 
 			var _this = this;
 			//获取轮播图片---暂时还不能自动播放
-			this.$http.get("http://120.79.167.62:3000/banner").then(response => {
+			this.$http.get("http://localhost:3000/banner").then(response => {
 			    
 			    var banners = response.data.banners;
 			    banners.map(function(ele){
@@ -126,7 +128,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 			    console.log(error);
 			})
 			//获取歌单数据
-			this.$http.get('http://120.79.167.62:3000/personalized').then(res=>{
+			this.$http.get('http://localhost:3000/personalized').then(res=>{
 				//console.log(res.data);
 				_this.gedanList = res.data.result.slice(0,6);
 				console.log(_this.gedanList);
@@ -135,7 +137,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 				console.log(error);
 			})
 			//获取歌曲数据
-			this.$http.get("http://120.79.167.62:3000/personalized/newsong").then(res=>{
+			this.$http.get("http://localhost:3000/personalized/newsong").then(res=>{
 				console.log(res.data.result);
 				_this.songList = res.data.result;
 	
@@ -167,6 +169,15 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	text-align: center;
 	line-height: 180px;
 	color: #999;
+	position: relative;
+}
+.lunbo p{
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	top: 50%;
+	transform: translateY(-50%);
 }
 .lunbo .swiper-container{
 	height: 100%;

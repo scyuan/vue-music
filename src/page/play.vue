@@ -13,14 +13,23 @@
 					</div>
 					<div class="back"></div>
 				</div>
-				<div class="content" ref='content'>
-					<div class="stick">
-						<div>
-							<img id='stick' src="../assets/img/stick_bg.png" alt="">
+				<div class="content" @click='showgeci()' ref='content'>
+					<!-- 歌曲背景 -->
+					<div class="bg-div" v-show='!geci'>
+						<div class="bg-div-wrap">
+							<div class="stick">
+								<div>
+									<img id='stick' src="../assets/img/stick_bg.png" alt="">
+								</div>
+							</div>
+							<div class="changpian">
+								<img v-bind:src="bg" alt="">
+							</div>
 						</div>
 					</div>
-					<div class="changpian">
-						<img v-bind:src="bg" alt="">
+					<!-- 歌曲歌词 -->
+					<div class="geci-div" v-show='geci'>
+						<div id="lrc"><p v-for='item in song_lrc'>{{item.lrc}}</p></div>
 					</div>
 				</div>
 				<div class="do-area">
@@ -48,10 +57,12 @@
 </template>
 <script>
 import currentlist from '../components/currentlist.vue'
+import $ from 'jquery'
 	export default{
 		data:function(){
 			return {
 				id:0,
+				geci:false,
 				show:false,
 				play:'&#xe668;',
 				pause:'&#xe613',
@@ -62,7 +73,9 @@ import currentlist from '../components/currentlist.vue'
 				time:0,
 				start_time:'00:00',
 				end_time:'',
-				songUrl:''
+				songUrl:'',
+				song_lrc:[],
+				geci_map:0,
 			}
 		},
 		components:{
@@ -90,8 +103,17 @@ import currentlist from '../components/currentlist.vue'
 			}
 		},
 		methods:{
+			//初始化歌词界面
+			initGeci(){
+				//获取歌词
+				this.getGeci();
+				$('#lrc').animate({scrollTop:0},300);
+				$('#lrc').children().removeClass('white');
+			},
 			// 上一首
 			prev(){
+
+
 				var list = this.$store.state.currList;
 				var index = this.$store.state.currIndex;
 				if(index == 0)
@@ -100,9 +122,12 @@ import currentlist from '../components/currentlist.vue'
 					index--;
 				this.playWitch(list[index].id);
 
+				this.initGeci();
+
 			},
 			// 下一首
 			next(){
+
 				var list = this.$store.state.currList;
 				var index = this.$store.state.currIndex;
 				if(index == list.length - 1)
@@ -110,6 +135,8 @@ import currentlist from '../components/currentlist.vue'
 				else
 					index++;
 				this.playWitch(list[index].id);
+
+				this.initGeci();
 			},
 			// 获取当前播放列表
 			getCurrentList(){
@@ -127,8 +154,11 @@ import currentlist from '../components/currentlist.vue'
 				}
 				this.show = true;
 				this.id = id;
-
-				this.getSong();
+				var _this = this;
+				setTimeout(function(){
+					_this.getSong();
+				},299);
+				
 			},
 			// 更换歌曲，不需要调用this.show=true;
 			playWitch(id){
@@ -156,6 +186,18 @@ import currentlist from '../components/currentlist.vue'
 				var rate = time*1000/this.time;
 
 				document.getElementsByClassName('line-played')[0].style.width=rate*236+'px';
+				if(this.song_lrc.length!=0){
+					var obj = this.geci_map.get(this.start_time);
+					if(obj!=undefined){
+						console.log(obj);
+						
+						if(obj.index>5)
+							$('#lrc').animate({scrollTop:32*(obj.index-5)},300);
+						$('#lrc').children().removeClass('white').eq(obj.index).addClass('white');
+					}
+					
+				}
+				
 			},
 			canPlay(){
 				this.state = this.pause;
@@ -189,6 +231,14 @@ import currentlist from '../components/currentlist.vue'
 				}
 				return minutes+':'+s;
 			},
+			imgLoad(img, callback) {
+	            var timer = setInterval(function() {
+	                if(img.complete) {
+	                    callback()
+	                    clearInterval(timer)
+	                }
+	            }, 50)
+	        },
 			// 通过歌曲ID获取歌曲信息，并根据url加载歌曲
 			getSong(){
 				//获取歌曲
@@ -196,7 +246,7 @@ import currentlist from '../components/currentlist.vue'
 					console.log(res.data.songs[0])
 					this.name = res.data.songs[0].name;
 					this.bg = res.data.songs[0].al.picUrl;
-					document.getElementsByClassName('bg-img')[0].style.backgroundImage='url('+this.bg+')';
+					//
 					this.singer = res.data.songs[0].ar[0].name;
 					this.time = res.data.songs[0].dt;
 					this.end_time = this.secondeToTime(res.data.songs[0].dt/1000);
@@ -232,13 +282,63 @@ import currentlist from '../components/currentlist.vue'
 						this.$store.commit('setCurrState',true);
 						document.getElementById('stick').className = '';
 						document.getElementsByClassName('changpian')[0].style.animationPlayState='running';
-					
+						
+						var img = new Image();
+						img.src = this.bg;
+						var _this = this;
+						this.imgLoad(img,function() {
+            				document.getElementsByClassName('bg-img')[0].style.backgroundImage='url('+_this.bg+')';
+        				})
+        				this.getGeci();
 					},error=>{
 						console.log(error);
 					})
 				},error=>{
 					console.log(error);
 				})
+			},
+
+			getGeci(){
+				this.$http.get('http://localhost:3000/lyric?id='+this.id).then(res=>{
+					var lrc = res.data.lrc.lyric;
+					
+					var lrcs = lrc.split('\n');
+					
+					this.geci_map = new Map();
+					this.song_lrc = [];
+
+					for(let i=0,j=0;i<lrcs.length;i++){					
+						var temp_time = ((lrcs[i].split(']')[0]).split('[')[1]).split('.')[0];
+						var temp_lrc = lrcs[i].split(']')[1];
+						if(temp_lrc != ''){
+							var temp = {
+							time:temp_time,
+							lrc:temp_lrc
+						}
+							this.song_lrc.push(temp);
+							this.geci_map.set(temp_time,{index:j,lrc:temp_lrc});
+							j++;
+						}
+						
+					}
+					
+				},error=>{
+					console.log(error);
+				})
+			},
+
+			showgeci(){
+				console.log('打开歌词');
+				if(this.geci){
+					this.geci = false;
+				}else{
+					this.geci = true;
+
+					if(this.song_lrc.length != 0 ){
+						return ;
+					}
+					this.getGeci();
+				}
 			}
 		},
 		
@@ -251,6 +351,9 @@ import currentlist from '../components/currentlist.vue'
 			this.$refs.content.style.height = (height-208)+'px';
 
 			document.getElementsByClassName('wrap-content')[0].addEventListener('touchmove',function(e){
+				e.preventDefault();
+			},false)
+			document.getElementById('lrc').addEventListener('touchmove',function(e){
 				e.preventDefault();
 			},false)
 		}
@@ -324,9 +427,39 @@ import currentlist from '../components/currentlist.vue'
 }
 .content{
 	position: relative;
+}
+.bg-div,.geci-div{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	
+}
+.geci-div{
+	color: #c1c1c1;
+	font-size: 14px;
+	padding: 40px 0px;
+}
+.geci-div div{
+	height: 100%;
+	text-align: center;
+	overflow: hidden;
+	overflow-y: scroll;
+}
+.geci-div p{
+	line-height: 32px;
+}
+.geci-div .white{
+	color: #fff;
+}
+.bg-div-wrap{
+	position: relative;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	height: 100%;
+	width: 100%;
 }
 .stick{
 	position: absolute;
