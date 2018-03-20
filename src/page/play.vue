@@ -348,7 +348,7 @@ import $ from 'jquery'
 
 			var height = window.screen.height;
 
-			this.$refs.content.style.height = (height-208)+'px';
+			this.$refs.content.style.height = (height-208)/40+'rem';
 
 			document.getElementsByClassName('wrap-content')[0].addEventListener('touchmove',function(e){
 				e.preventDefault();

@@ -26,7 +26,7 @@
 				
 			</div>
 		</div>
-		<div style="height:250px;"></div>
+		<div id='zanwei'></div>
 		<ul class="body" ref="body">
 			<li v-for='(item,index) in songList'>
 				<gedansongitem v-bind:song='item' v-bind:index='index' v-on:listenplay='play'></gedansongitem>
@@ -63,6 +63,7 @@ import gedansongitem from '../components/gedansongitem'
 		},
 		mounted:function(){
 			console.log(this.gedanId);
+			document.getElementById('zanwei').style.height = (250/40)+'rem';
 			var header = document.getElementById('header');
 			document.addEventListener('scroll',function(){
 				

@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import '../static/swiper/swiper-3.4.2.min.css'
+import 'lib-flexible'
 Vue.use(VueAwesomeSwiper)
 
 //axios
