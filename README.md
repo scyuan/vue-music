@@ -1,5 +1,12 @@
 # vue-music
 
+> 2018年03月20日 更新：使用手淘flexible适配方案，用来适配不同屏幕尺寸
+
+flexible适配只能用于长宽，不能用于文字大小
+
+目前只是粗略的试水，还是会有点bug，后期解决
+
+
 > A Vue.js project
 
 ## Build Setup
