@@ -36,7 +36,7 @@
 					case 1:
 						return "/topmusic";
 					case 2:
-						return "mv";
+						return "/mv";
 				}
 			}
 		}

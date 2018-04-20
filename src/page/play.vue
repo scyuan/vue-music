@@ -348,7 +348,7 @@ import $ from 'jquery'
 
 			var height = window.screen.height;
 
-			this.$refs.content.style.height = (height-208)/40+'rem';
+			this.$refs.content.style.height = (height-208)+'px';
 
 			document.getElementsByClassName('wrap-content')[0].addEventListener('touchmove',function(e){
 				e.preventDefault();
@@ -379,6 +379,7 @@ import $ from 'jquery'
 }
 .aaa{
 	overflow: hidden;
+	height: 100%;
 }
 .bg-img{
 	position: absolute;

@@ -1,7 +1,13 @@
 <template>
   <div id="app">
+    <div class="modal" v-show='show'>
+      <p>请在移动端运行，抱歉</p>
+      <p>谷歌浏览器请打开开发者工具并选择手机模式</p>
+    </div>
     <musicheader></musicheader>
-    <router-view v-on:listenplay='play'></router-view>
+    <keep-alive>
+      <router-view v-on:listenplay='play'></router-view>
+    </keep-alive>
     <musicbottom v-on:open='open' v-on:changesong="changesong"></musicbottom>
     <play ref='play'></play>
    <!--  <currentlist></currentlist>  -->
@@ -15,8 +21,10 @@ import play from './page/play.vue'
 import currentlist from './components/currentlist.vue'
 export default {
   name: 'app',
-  methods:{
-    
+  data(){
+    return{
+      show:false
+    }
   },
   methods:{
     play(id){
@@ -27,10 +35,30 @@ export default {
     },
     changesong(id){
       this.$refs.play.playWitch(id);
+    },
+    check(){
+      var gg = document.documentElement;
+      var width = gg.clientWidth;
+
+      if(width>414){
+        // 屏幕尺寸过大
+        this.show = true;
+
+      }else{
+        this.show = false;
+      }
     }
   },
   components:{
     musicheader,musicbottom,play,currentlist,play
+  },
+  mounted(){
+    var _this = this;
+    this.check();
+    var SCREENTYPE = 'orientationchange' in window ? 'orientationchange' : 'resize';
+    window.addEventListener(SCREENTYPE,function(){
+      _this.check();
+    });
   }
 }
 </script>
@@ -78,5 +106,15 @@ div,body,*,ul,p,li{
   overflow: hidden;
 }
 
-
+.modal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  z-index: 9999;
+  text-align: center;
+  padding-top: 300px;
+}
 </style>

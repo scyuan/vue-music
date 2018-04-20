@@ -109,12 +109,23 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	        }
 	    },
 		mounted:function(){
+			var _this = this;
 
 			var width = screen.width;
 	    	this.$refs.gedan_loading.style.height = (width/3 + 34) * 2 + 'px';
 	    	this.$refs.gedan_content.style.height = (width/3 + 34) * 2 + 'px';
 
-			var _this = this;
+			// 监听窗口变化事件
+			var SCREENTYPE = 'orientationchange' in window ? 'orientationchange' : 'resize';
+		    window.addEventListener(SCREENTYPE,function(){
+		      	var width = screen.width;
+	    		_this.$refs.gedan_loading.style.height = (width/3 + 34) * 2 + 'px';
+	    		_this.$refs.gedan_content.style.height = (width/3 + 34) * 2 + 'px';
+
+		    });
+			
+
+			
 			//获取轮播图片---暂时还不能自动播放
 			this.$http.get("http://localhost:3000/banner").then(response => {
 			    
@@ -213,7 +224,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	position: relative;
 	width: 33.33%;
 	float: left;
-	padding:0px 0.5px;
+	padding:0px 1px;
 }
 .gedan-content li img{
 	width: 100%;
@@ -222,6 +233,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 }
 .gedan-content li p{
 	font-size: 12px;
+	word-break: break-all;
 }
 .playCount{
 	position: absolute;

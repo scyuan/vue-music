@@ -392,12 +392,17 @@
 	left: 0;
 	z-index: 10;
 }
+.video-div video{
+	height: 100%;
+	width: auto;
+}
 .video-div>div{
 	background-color: #000;
 	height: 100%;
 	width: 100%;
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	position: relative;
 }
 .control{
@@ -586,7 +591,7 @@
 }
 .comment-user{
 	height: 32px;
-	width: 150px;
+	width: 250px;
 	float: left;
 	padding-left: 10px;
 	position: relative;

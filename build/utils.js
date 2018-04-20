@@ -18,15 +18,7 @@ exports.cssLoaders = function (options) {
   const cssLoader = {
     loader: 'css-loader',
     options: {
-      sourceMap: options.sourceMap,
-      importLoaders:2
-    }
-  }
-
-  const px2remLoader = {
-    loader: 'px2rem-loader',
-    options:{
-      remUnit:40
+      sourceMap: options.sourceMap
     }
   }
 
@@ -39,7 +31,7 @@ exports.cssLoaders = function (options) {
 
   // generate loader string to be used with extract text plugin
   function generateLoaders (loader, loaderOptions) {
-    const loaders = [cssLoader, px2remLoader]
+    const loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
 
     if (loader) {
       loaders.push({
@@ -55,7 +47,8 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
-        fallback: 'vue-style-loader'
+        fallback: 'vue-style-loader',
+        publicPath:'../../'
       })
     } else {
       return ['vue-style-loader'].concat(loaders)

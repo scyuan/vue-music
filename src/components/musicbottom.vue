@@ -94,7 +94,7 @@ import currentlist from './currentlist.vue'
 </script>
 <style scoped>
 .bottom{
-	height: 40px;
+	height: 48px;
 	width: 100%;
 	background: #ee4000;
 	position: fixed;
@@ -110,7 +110,7 @@ import currentlist from './currentlist.vue'
 	width: 44px;
 	height: 44px;
 	position: absolute;
-	top: -10px;
+	top: 2px;
 	left: -55px;
 	border-radius: 22px;
 	border:2px solid #ee4000;
@@ -122,7 +122,7 @@ import currentlist from './currentlist.vue'
 .info{
 	width: 40%;
 	float: left;
-	padding-top: 1.5px;
+	padding-top: 3px;
 }
 .name{
 	font-size: 14px
@@ -134,7 +134,7 @@ import currentlist from './currentlist.vue'
 	width: 60%;
 	float: right;
 	font-size: 24px;
-	line-height: 40px;
+	line-height: 48px;
 	text-align: right;
 }
 .do i{
