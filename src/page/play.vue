@@ -531,7 +531,6 @@ import $ from 'jquery'
 }
 .line-played{
 	height: 1px;
-	width: 200px;
 	background: red;
 	top: 0;
 	left: 0;
