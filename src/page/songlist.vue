@@ -1,9 +1,8 @@
 <template>
-	<div class="songlist">
+	<div class="songlist" ref='songlist'>
 		<div class="img-wrap">
 			<div class="gedan-img" ref='gedanimg'></div>
 		</div>
-		
 		<div class="gedan-info">
 			<img v-lazy='gedanimg' alt="" class="gedan_avator">
 			<div class="wenzi">
@@ -32,13 +31,21 @@
 				<gedansongitem v-bind:song='item' v-bind:index='index' v-on:listenplay='play'></gedansongitem>
 			</li>
 		</ul>
+
+		<!-- 加载时的loading -->
+		<div class="modal-loading" v-if='showModal'>
+			<scale-loader :color="color"></scale-loader>
+		</div>
 	</div>
 </template>
 <script>
 import gedansongitem from '../components/gedansongitem'
+import ScaleLoader from 'vue-spinner/src/ScaleLoader'
 	export default{
 		data:function(){
 			return {
+				showModal:true,
+				color:'#f01414',
 				gedanId:this.$route.query.gedanId,
 				gedanimg:'',
 				creator_name:'',
@@ -50,7 +57,7 @@ import gedansongitem from '../components/gedansongitem'
 			}
 		},
 		components:{
-			gedansongitem
+			gedansongitem,ScaleLoader
 		},
 		methods:{
 			back:function(){
@@ -61,20 +68,7 @@ import gedansongitem from '../components/gedansongitem'
 				this.$emit('listenplay',id);
 			}
 		},
-		mounted:function(){
-			console.log(this.gedanId);
-			document.getElementById('zanwei').style.height = (250/40)+'rem';
-			var header = document.getElementById('header');
-			document.addEventListener('scroll',function(){
-				
-				if(window.pageYOffset >= 204){
-					if(header.className.indexOf('white')===-1){
-						header.className = header.className + ' white';
-					}
-				}else{
-					header.className = header.className.replace(' white','');
-				}
-			})
+		created:function(){
 			var _this = this;
 			this.$http.get("http://localhost:3000/playlist/detail?id="+_this.gedanId)
 			.then(res=>{
@@ -90,10 +84,29 @@ import gedansongitem from '../components/gedansongitem'
 				_this.songList = res.data.result.tracks.map(function(e){
 					return e;
 				});
+				_this.showModal = false;
 				console.log(_this.songList);
 			},error=>{
 				console.log(error);
 			})
+		},
+		mounted:function(){
+			// 将页面的scrollTop设置为0；
+			console.clear();
+			this.$refs.songlist.scrollTop = 0;
+
+			document.getElementById('zanwei').style.height = (250)+'px';
+			var header = document.getElementById('header');
+			document.addEventListener('scroll',function(){	
+				if(window.pageYOffset >= 204){
+					if(header.className.indexOf('white')===-1){
+						header.className = header.className + ' white';
+					}
+				}else{
+					header.className = header.className.replace(' white','');
+				}
+			})
+			
 		}
 	}
 </script>
@@ -209,5 +222,17 @@ import gedansongitem from '../components/gedansongitem'
 .white{
 	background-color: #ee4000;
 	color: #fff;
+}
+.modal-loading{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 48px;
+	background: #fff;
+	z-index: 99;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 </style>

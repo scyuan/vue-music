@@ -5,9 +5,9 @@
       <p>谷歌浏览器请打开开发者工具并选择手机模式</p>
     </div>
     <musicheader></musicheader>
-    <keep-alive>
+    
       <router-view v-on:listenplay='play'></router-view>
-    </keep-alive>
+   
     <musicbottom v-on:open='open' v-on:changesong="changesong"></musicbottom>
     <play ref='play'></play>
    <!--  <currentlist></currentlist>  -->
@@ -43,7 +43,6 @@ export default {
       if(width>414){
         // 屏幕尺寸过大
         this.show = true;
-
       }else{
         this.show = false;
       }

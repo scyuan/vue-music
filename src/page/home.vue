@@ -1,7 +1,8 @@
 <template>
+	<keep-alive>
 	<div class="home" ref='home'>
 		<div class="lunbo">
-			<p>正在加载图片</p>
+			<p class="loading-lunbo">正在加载图片</p>
 			<swiper :options="swiperOption"  ref="mySwiper">  
 			      
 			    <swiper-slide v-for='img in imgUrls'> 
@@ -45,6 +46,7 @@
 			</div>
 		</div>
 	</div>
+</keep-alive>
 </template>
 
 <script>
@@ -65,7 +67,11 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	                pagination: '.swiper-pagination',  
 	                slidesPerView: 'auto',  
 	                centeredSlides: true, 
-	                autoplay:3,
+	       //          autoplay: {
+					   //  delay: 3000,
+					   //  stopOnLastSlide: false,
+					   //  disableOnInteraction: true,
+				    // },
 
 	                paginationClickable: true,
 	                onSlideChangeEnd: swiper => {  
@@ -175,10 +181,8 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	padding-top: 72px;
 }
 .lunbo{
-	height: 145px;
-	background-color: #ddd;
+	
 	text-align: center;
-	line-height: 180px;
 	color: #999;
 	position: relative;
 }
@@ -258,5 +262,9 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 }
 .gedan-name{
 	height: 35px;
+}
+.loading-lunbo{
+	line-height: 130px;
+	background: #ddd;
 }
 </style>
