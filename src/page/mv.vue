@@ -263,7 +263,7 @@
 	        },
 	        //获取先关推荐video
 	        getSimilarVideo(id){
-	        	this.$http.get("http://localhost:3000/simi/mv?mvid="+id).then(res=>{
+	        	this.$http.get("http://www.yuansichao.xin:3000/simi/mv?mvid="+id).then(res=>{
 	        		console.log(res.data.mvs)
 	        		this.mvs = res.data.mvs;
 	        	},error=>{
@@ -272,7 +272,7 @@
 	        },
 	        //获取评论
 	        getComments(id){
-	        	this.$http.get('http://localhost:3000/comment/mv?id='+id).then(res=>{
+	        	this.$http.get('http://www.yuansichao.xin:3000/comment/mv?id='+id).then(res=>{
 	        		this.hot_comments = res.data.hotComments;
 	        		this.comments = res.data.comments;
 	        		console.log(res);
@@ -290,8 +290,8 @@
 	        },
 	        //获取mv数据
 	        getMV(id){
-	        	this.$http.get('http://localhost:3000/mv?mvid='+id).then(res=>{
-	        		this.src_mp4 = "http://localhost:3000/mv/url?url="+this.selectUrl(res.data.data.brs);
+	        	this.$http.get('http://www.yuansichao.xin:3000/mv?mvid='+id).then(res=>{
+	        		this.src_mp4 = "http://www.yuansichao.xin:3000/mv/url?url="+this.selectUrl(res.data.data.brs);
 					
 					var media = document.getElementById('media');
 	        	
@@ -312,7 +312,7 @@
 
 		},
 		mounted(){
-			this.$http.get('http://localhost:3000/top/mv?limit=10').then(res=>{
+			this.$http.get('http://www.yuansichao.xin:3000/top/mv?limit=10').then(res=>{
 				this.list = res.data.data;
 				console.log(this.list)
 			},error=>{

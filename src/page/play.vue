@@ -242,7 +242,7 @@ import $ from 'jquery'
 			// 通过歌曲ID获取歌曲信息，并根据url加载歌曲
 			getSong(){
 				//获取歌曲
-				this.$http.get('http://localhost:3000/song/detail?ids='+this.id).then(res=>{
+				this.$http.get('http://www.yuansichao.xin:3000/song/detail?ids='+this.id).then(res=>{
 					console.log(res.data.songs[0])
 					this.name = res.data.songs[0].name;
 					this.bg = res.data.songs[0].al.picUrl;
@@ -254,7 +254,7 @@ import $ from 'jquery'
 					this.$store.commit('setCurrSong',{url:res.data.songs[0].al.picUrl,name:res.data.songs[0].name,singer:res.data.songs[0].ar[0].name});
 
 					//获取歌曲url,加载歌曲
-					this.$http.get('http://localhost:3000/music/url?id='+res.data.songs[0].id)
+					this.$http.get('http://www.yuansichao.xin:3000/music/url?id='+res.data.songs[0].id)
 					.then(res=>{
 						console.log(res.data.data[0].url);
 						this.songUrl = res.data.data[0].url;
@@ -299,7 +299,7 @@ import $ from 'jquery'
 			},
 
 			getGeci(){
-				this.$http.get('http://localhost:3000/lyric?id='+this.id).then(res=>{
+				this.$http.get('http://www.yuansichao.xin:3000/lyric?id='+this.id).then(res=>{
 					var lrc = res.data.lrc.lyric;
 					
 					var lrcs = lrc.split('\n');

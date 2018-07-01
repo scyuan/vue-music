@@ -133,7 +133,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 
 			
 			//获取轮播图片---暂时还不能自动播放
-			this.$http.get("http://localhost:3000/banner").then(response => {
+			this.$http.get("http://www.yuansichao.xin:3000/banner").then(response => {
 			    
 			    var banners = response.data.banners;
 			    banners.map(function(ele){
@@ -145,7 +145,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 			    console.log(error);
 			})
 			//获取歌单数据
-			this.$http.get('http://localhost:3000/personalized').then(res=>{
+			this.$http.get('http://www.yuansichao.xin:3000/personalized').then(res=>{
 				//console.log(res.data);
 				_this.gedanList = res.data.result.slice(0,6);
 				console.log(_this.gedanList);
@@ -154,7 +154,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 				console.log(error);
 			})
 			//获取歌曲数据
-			this.$http.get("http://localhost:3000/personalized/newsong").then(res=>{
+			this.$http.get("http://www.yuansichao.xin:3000/personalized/newsong").then(res=>{
 				console.log(res.data.result);
 				_this.songList = res.data.result;
 	
