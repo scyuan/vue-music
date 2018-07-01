@@ -70,7 +70,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader'
 		},
 		created:function(){
 			var _this = this;
-			this.$http.get("http://localhost:3000/playlist/detail?id="+_this.gedanId)
+			this.$http.get("http://www.yuansichao.xin:3000/playlist/detail?id="+_this.gedanId)
 			.then(res=>{
 				console.log(res.data.result);
 				_this.name = res.data.result.name;
