@@ -1,12 +1,16 @@
 <template>
 	<keep-alive>
 	<div class="home" ref='home'>
+		<div class="gedan-loading" ref='gedan_loading'  v-show='gedan_loading_show'>
+			<scale-loader :color="color"></scale-loader>
+		</div>
 		<div class="lunbo">
-			<p class="loading-lunbo">正在加载图片</p>
+			
 			<swiper :options="swiperOption"  ref="mySwiper">  
 			      
 			    <swiper-slide v-for='img in imgUrls'> 
-			        <img v-bind:src="img" width="100%" alt="">
+			        <img :data-src="img" class="swiper-lazy" alt="">
+			        <div class="swiper-lazy-preloader"></div>
 			    </swiper-slide>
 			    
 			    <div class="swiper-pagination" slot="pagination"></div>  
@@ -21,9 +25,7 @@
 					</div>
 				</div>
 				<ul class="gedan-content clearfix" ref='gedan_content'>
-					<div class="gedan-loading" ref='gedan_loading'  v-show='gedan_loading_show'>
-						<scale-loader :color="color"></scale-loader>
-					</div>
+					
 					<li v-for='(item,index) in gedanList' >
 						<img v-lazy="item.picUrl" v-on:load='imgload(index,item.picUrl)' v-on:click='gotogedan(item.id)' alt="">
 						<p class="gedan-name">{{item.name}}</p>
@@ -64,21 +66,18 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 				gedanList:[],
 				songList:[],
 				swiperOption: {  
-	                pagination: '.swiper-pagination',  
-	                slidesPerView: 'auto',  
-	                centeredSlides: true, 
-	       //          autoplay: {
-					   //  delay: 3000,
-					   //  stopOnLastSlide: false,
-					   //  disableOnInteraction: true,
-				    // },
-
-	                paginationClickable: true,
-	                onSlideChangeEnd: swiper => {  
-	                    //这个位置放swiper的回调方法  
-	                    this.page = swiper.realIndex+1;  
-	                    this.index = swiper.realIndex;  
-	                },  
+	              lazy: {
+				    loadPrevNext: true,
+				  },
+				  loop:true,
+		          autoplay:{
+		          	stopOnLastSlide:false,
+		          	delay:3000,
+		          	disableOnInteraction:false
+		          },
+		          // // 最左最右禁止滑动
+		          resistanceRatio : 0,
+		          
 	            }
 			}
 		},
@@ -117,27 +116,26 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 		mounted:function(){
 			var _this = this;
 
-			var width = screen.width;
-	    	this.$refs.gedan_loading.style.height = (width/3 + 34) * 2 + 'px';
-	    	this.$refs.gedan_content.style.height = (width/3 + 34) * 2 + 'px';
+			// var width = screen.width;
+	  //   	this.$refs.gedan_loading.style.height = (width/3 + 34) * 2 + 'px';
+	  //   	this.$refs.gedan_content.style.height = (width/3 + 34) * 2 + 'px';
 
-			// 监听窗口变化事件
-			var SCREENTYPE = 'orientationchange' in window ? 'orientationchange' : 'resize';
-		    window.addEventListener(SCREENTYPE,function(){
-		      	var width = screen.width;
-	    		_this.$refs.gedan_loading.style.height = (width/3 + 34) * 2 + 'px';
-	    		_this.$refs.gedan_content.style.height = (width/3 + 34) * 2 + 'px';
-
-		    });
+			// // 监听窗口变化事件
+			// var SCREENTYPE = 'orientationchange' in window ? 'orientationchange' : 'resize';
+		 //    window.addEventListener(SCREENTYPE,function(){
+		 //      	var width = screen.width;
+	  //   		_this.$refs.gedan_loading.style.height = (width/3 + 34) * 2 + 'px';
+	  //   		_this.$refs.gedan_content.style.height = (width/3 + 34) * 2 + 'px';
+		 //    });
 			
 
 			
 			//获取轮播图片---暂时还不能自动播放
-			this.$http.get("http://www.yuansichao.xin:3000/banner").then(response => {
+			this.$http.get("http://120.79.167.62:3000/banner").then(response => {
 			    
 			    var banners = response.data.banners;
 			    banners.map(function(ele){
-			    	_this.imgUrls.push(ele.pic);
+			    	_this.imgUrls.push(ele.picUrl);
 			    	return ele;
 			    })
 			}, error => {
@@ -145,7 +143,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 			    console.log(error);
 			})
 			//获取歌单数据
-			this.$http.get('http://www.yuansichao.xin:3000/personalized').then(res=>{
+			this.$http.get('http://120.79.167.62:3000/personalized').then(res=>{
 				//console.log(res.data);
 				_this.gedanList = res.data.result.slice(0,6);
 				console.log(_this.gedanList);
@@ -154,7 +152,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 				console.log(error);
 			})
 			//获取歌曲数据
-			this.$http.get("http://www.yuansichao.xin:3000/personalized/newsong").then(res=>{
+			this.$http.get("http://120.79.167.62:3000/personalized/newsong").then(res=>{
 				console.log(res.data.result);
 				_this.songList = res.data.result;
 	
@@ -168,8 +166,12 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 </script>
 <style scoped>
 .gedan-loading{
-	width: 100%;
-	position: absolute;
+	position: fixed;
+	left: 0;
+	left: 0;
+	right: 0;
+	top: 72px;
+	bottom: 48px;
 	z-index: 100;
 	background: #fff;
 	display: flex;
@@ -266,5 +268,14 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 .loading-lunbo{
 	line-height: 130px;
 	background: #ddd;
+}
+.swiper-slide img{
+	width: 100%;
+	height: auto;
+}
+.swiper-slide{
+	height: 10rem;
+    background-color: #c2c2c2;
+    width: 375px;
 }
 </style>

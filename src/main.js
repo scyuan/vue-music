@@ -21,8 +21,8 @@ import store from './store/index.js'
 
 import VueLazyload from 'vue-lazyload'
 Vue.use(VueLazyload, {
-  error: 'assets/img/error.jpg',//这个是请求失败后显示的图片
-  loading: '../static/img/loading.jpg',//这个是加载的loading过渡效果
+  error: require('./assets/img/error.jpg'),//这个是请求失败后显示的图片
+  loading: require('../static/img/loading.jpg'),//这个是加载的loading过渡效果
   try: 2 // 这个是加载图片数量
 })
 

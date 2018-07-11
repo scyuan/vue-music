@@ -13,7 +13,7 @@
 							<i v-if='index == currIndex' class="icon icon-play">&#xe643;</i>
 							{{item.name}}
 						</span>
-						<span class="singer">&nbsp;-&nbsp;{{item.singer}}</span>
+						<!-- <span class="singer">&nbsp;-&nbsp;{{item.singer}}</span> -->
 						<i class="icon">&#xe621;</i>
 					</li>
 				</ul>
@@ -97,6 +97,10 @@
 .singer{
 	font-size: 13px;
 	color: #999;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	display: inline-block;
 }
 .wrap-content{
 	height: 360px;

@@ -189,7 +189,7 @@ import $ from 'jquery'
 				if(this.song_lrc.length!=0){
 					var obj = this.geci_map.get(this.start_time);
 					if(obj!=undefined){
-						console.log(obj);
+						// console.log(obj);
 						
 						if(obj.index>5)
 							$('#lrc').animate({scrollTop:32*(obj.index-5)},300);
@@ -242,21 +242,27 @@ import $ from 'jquery'
 			// 通过歌曲ID获取歌曲信息，并根据url加载歌曲
 			getSong(){
 				//获取歌曲
-				this.$http.get('http://www.yuansichao.xin:3000/song/detail?ids='+this.id).then(res=>{
-					console.log(res.data.songs[0])
+				this.$http.get('http://120.79.167.62:3000/song/detail?ids='+this.id).then(res=>{
+					
 					this.name = res.data.songs[0].name;
 					this.bg = res.data.songs[0].al.picUrl;
 					//
-					this.singer = res.data.songs[0].ar[0].name;
+					if(res.data.songs[0].ar.length == 1){
+						this.singer = res.data.songs[0].ar[0].name;
+					}else{
+						this.singer = res.data.songs[0].ar.reduce(function(x,y){return x.name+'/'+y.name});
+					}
+
+					
 					this.time = res.data.songs[0].dt;
 					this.end_time = this.secondeToTime(res.data.songs[0].dt/1000);
 
 					this.$store.commit('setCurrSong',{url:res.data.songs[0].al.picUrl,name:res.data.songs[0].name,singer:res.data.songs[0].ar[0].name});
 
 					//获取歌曲url,加载歌曲
-					this.$http.get('http://www.yuansichao.xin:3000/music/url?id='+res.data.songs[0].id)
+					this.$http.get('http://120.79.167.62:3000/music/url?id='+res.data.songs[0].id)
 					.then(res=>{
-						console.log(res.data.data[0].url);
+						//console.log(res.data.data[0].url);
 						this.songUrl = res.data.data[0].url;
 						this.state = this.pause;
 						this.$store.commit('setCurrState',true);
@@ -299,17 +305,23 @@ import $ from 'jquery'
 			},
 
 			getGeci(){
-				this.$http.get('http://www.yuansichao.xin:3000/lyric?id='+this.id).then(res=>{
+				this.$http.get('http://120.79.167.62:3000/lyric?id='+this.id).then(res=>{
+					
+					if(res.data.nolyric){
+						return ;
+					}
 					var lrc = res.data.lrc.lyric;
 					
 					var lrcs = lrc.split('\n');
 					
 					this.geci_map = new Map();
 					this.song_lrc = [];
-
+					console.log(lrcs);
 					for(let i=0,j=0;i<lrcs.length;i++){					
 						var temp_time = ((lrcs[i].split(']')[0]).split('[')[1]).split('.')[0];
+						
 						var temp_lrc = lrcs[i].split(']')[1];
+						
 						if(temp_lrc != ''){
 							var temp = {
 							time:temp_time,
@@ -328,7 +340,7 @@ import $ from 'jquery'
 			},
 
 			showgeci(){
-				console.log('打开歌词');
+				// console.log('打开歌词');
 				if(this.geci){
 					this.geci = false;
 				}else{

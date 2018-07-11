@@ -3,7 +3,7 @@
 		<p class="index">-{{index+1}}-</p>
 		<div class="info" @click='play(song.id)'>
 			<p class="name">{{song.name}}</p>
-			<p class='singer'>{{song.artists[0].name}}</p>
+			<p class='singer'>{{getSingers(song.ar)}}</p>
 		</div>
 		<div class="do">
 			<i class="icon do-icon1" v-on:click='moreIcon(index)'>&#xe61b;</i>
@@ -31,6 +31,14 @@
 			}
 		},
 		methods:{
+			getSingers(arr){
+				if(arr.length == 1){
+					return arr[0].name;
+				}
+				return arr.reduce(function(x,y){
+					return x.name+'/'+y.name;
+				})
+			},
 			play(id){
 				this.$emit('listenplay',id);
 			},

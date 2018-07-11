@@ -7,25 +7,34 @@
 		
 		<transition name='slide'>
 		<div class="video" v-show='video_show'>
-			<div class="video-div" @click='hoverMv()'>
-			<div>
-				<video id="media" width="100%" height="auto" autoplay @timeupdate='timeupdate()' @canplay='canplay()'> 
-			  		<source v-bind:src="src_mp4">
-  				</video>
-  				<transition name='c-show'>
-  					<div class="control" v-show='control_show'>
-  						<div class="control-wrap">
-  							<i class="icon back-icon" @click='back()'>&#xe628;</i>
-  							<i class="icon play-icon" @click.stop='playOrPause()' v-html='play'></i>
-  						</div>
-  					</div>
-  				</transition>	
-				<div class="mv_progress_bar" id='a'></div>
-  				<div class="mv_played_progress" id='b' ref='played'></div>
-  				<transition name='c-show'>
-  					<div class="dian" ref='dian' v-show="control_show"></div>
-  				</transition>
-  			</div>
+			<div class="video-div">
+				<div class="mengbann" @click.stop='hoverMv()'></div>
+				<div>
+					<video id="media" width="100%" height="auto" autoplay @timeupdate='timeupdate()'
+						@canplaythrough='canplay()'
+						@stalled='stalled()'
+						@error='error()'
+						@eventTester='eventTester()'
+						@loadstart='loadstart()'
+						@progress='progress()'
+						@suspend='suspend()'
+						@abort='abort()'> 
+				  		<source v-bind:src="src_mp4">
+	  				</video>
+	  				<transition name='c-show'>
+	  					<div class="control" v-show='control_show'>
+	  						<div class="control-wrap">
+	  							<i class="icon back-icon" @click='back()'>&#xe628;</i>
+	  							<i class="icon play-icon" @click.stop='playOrPause()' v-html='play'></i>
+	  						</div>
+	  					</div>
+	  				</transition>	
+					<div class="mv_progress_bar" id='a'></div>
+	  				<div class="mv_played_progress" id='b' ref='played'></div>
+	  				<transition name='c-show'>
+	  					<div class="dian" ref='dian' v-show="control_show"></div>
+	  				</transition>
+	  			</div>
 			</div>
 			
 			<div class="video-title">
@@ -154,6 +163,24 @@
 			}
 		},
 		methods:{
+			loadstart(){
+				console.log('开始请求数据');
+			},
+			progress(){
+				console.log('正在请求数据');
+			},
+			suspend(){
+				console.log('延迟下载');
+			},
+			abort(){
+				console.log('客户端主动终止下载（不是因为错误引起）');
+			},
+			error(){
+				console.log('请求数据时遇到错误');
+			},
+			stalled(){
+				console.log('网速失速');
+			},
 			msToDuration(ms){
 				var minutes = Math.floor(ms/1000/60);
 				var seconds = Math.floor((ms/1000)%60);
@@ -201,15 +228,16 @@
 	        },
 	        hoverMv(){
 	        	
-	        	if(this.control_show){
-	        		this.control_show = false;
-	        		$('#a').removeClass('height2');
-	        		$('#b').removeClass('height2');
-	        	}else{
-	        		this.control_show = true;
-	        		$('#a').addClass('height2');
-	        		$('#b').addClass('height2');
-	        	}
+	        	var _this = this;
+        		this.control_show = true;
+        		$('#a').addClass('height2');
+        		$('#b').addClass('height2');
+        		setTimeout(function(){
+					_this.control_show = false;
+        			$('#a').removeClass('height2');
+        			$('#b').removeClass('height2');
+        		},2000);
+	        	
 	        },
 	        // 可以播放，获取mv长度
 	        canplay(){
@@ -263,7 +291,7 @@
 	        },
 	        //获取先关推荐video
 	        getSimilarVideo(id){
-	        	this.$http.get("http://www.yuansichao.xin:3000/simi/mv?mvid="+id).then(res=>{
+	        	this.$http.get("http://120.79.167.62:3000/simi/mv?mvid="+id).then(res=>{
 	        		console.log(res.data.mvs)
 	        		this.mvs = res.data.mvs;
 	        	},error=>{
@@ -272,7 +300,7 @@
 	        },
 	        //获取评论
 	        getComments(id){
-	        	this.$http.get('http://www.yuansichao.xin:3000/comment/mv?id='+id).then(res=>{
+	        	this.$http.get('http://120.79.167.62:3000/comment/mv?id='+id).then(res=>{
 	        		this.hot_comments = res.data.hotComments;
 	        		this.comments = res.data.comments;
 	        		console.log(res);
@@ -290,8 +318,8 @@
 	        },
 	        //获取mv数据
 	        getMV(id){
-	        	this.$http.get('http://www.yuansichao.xin:3000/mv?mvid='+id).then(res=>{
-	        		this.src_mp4 = "http://www.yuansichao.xin:3000/mv/url?url="+this.selectUrl(res.data.data.brs);
+	        	this.$http.get('http://120.79.167.62:3000/mv?mvid='+id).then(res=>{
+	        		this.src_mp4 = "http://120.79.167.62:3000/mv/url?url="+this.selectUrl(res.data.data.brs);
 					
 					var media = document.getElementById('media');
 	        	
@@ -311,13 +339,16 @@
 	        }
 
 		},
-		mounted(){
-			this.$http.get('http://www.yuansichao.xin:3000/top/mv?limit=10').then(res=>{
+		created(){
+			this.$http.get('http://120.79.167.62:3000/top/mv?limit=10').then(res=>{
 				this.list = res.data.data;
 				console.log(this.list)
 			},error=>{
 				console.log(error);
 			})
+		},
+		mounted(){
+			
 
 		}
 	}
@@ -411,6 +442,7 @@
 	width: 100%;
 	position: absolute;
 	bottom: 0;
+	z-index: 999;
 }
 .control-wrap{
 	height: 100%;
@@ -652,5 +684,9 @@
 	letter-spacing: 0.5px;
 	line-height: 19px;
 	border: 1px solid #ddd;
+}
+.video-div>div.mengbann{
+	background:transparent;position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 99;
+	background: transparent !important;
 }
 </style>

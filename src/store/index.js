@@ -13,7 +13,7 @@ const state = {
 	},
 	//当前播放歌曲信息
 	currSong:{
-		url:'../assets/img/gedan.jpeg',
+		url:require('../assets/img/gedan.jpeg'),
 		name:'暂无播放歌曲',
 		singer:'无'
 	},

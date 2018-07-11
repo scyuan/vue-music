@@ -70,22 +70,22 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader'
 		},
 		created:function(){
 			var _this = this;
-			this.$http.get("http://www.yuansichao.xin:3000/playlist/detail?id="+_this.gedanId)
+			this.$http.get("http://120.79.167.62:3000/playlist/detail?id="+_this.gedanId)
 			.then(res=>{
-				console.log(res.data.result);
-				_this.name = res.data.result.name;
-				_this.gedanimg = res.data.result.coverImgUrl;
-				_this.creator_name = 'from  '+res.data.result.creator.nickname;
-				_this.$refs.gedanimg.style.backgroundImage='url('+res.data.result.coverImgUrl+')'
-				_this.$refs.avator.style.backgroundImage='url('+res.data.result.creator.avatarUrl+')'
-				_this.recommendCount = res.data.result.subscribedCount;
-				_this.commentCount = res.data.result.commentCount;
-				_this.shareCount = res.data.result.shareCount;
-				_this.songList = res.data.result.tracks.map(function(e){
+				
+				_this.name = res.data.playlist.name;
+				_this.gedanimg = res.data.playlist.coverImgUrl;
+				_this.creator_name = 'from  '+res.data.playlist.creator.nickname;
+				_this.$refs.gedanimg.style.backgroundImage='url('+res.data.playlist.coverImgUrl+')'
+				_this.$refs.avator.style.backgroundImage='url('+res.data.playlist.creator.avatarUrl+')'
+				_this.recommendCount = res.data.playlist.subscribedCount;
+				_this.commentCount = res.data.playlist.commentCount;
+				_this.shareCount = res.data.playlist.shareCount;
+				_this.songList = res.data.playlist.tracks.map(function(e){
 					return e;
 				});
 				_this.showModal = false;
-				console.log(_this.songList);
+				
 			},error=>{
 				console.log(error);
 			})
