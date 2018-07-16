@@ -68,7 +68,7 @@ import $ from 'jquery'
 				pause:'&#xe613',
 				state:"",
 				name:'',
-				bg:'',
+				bg:require('../assets/img/placeholder_disk_play_song.png'),
 				singer:'',
 				time:0,
 				start_time:'00:00',
@@ -154,11 +154,8 @@ import $ from 'jquery'
 				}
 				this.show = true;
 				this.id = id;
-				var _this = this;
-				setTimeout(function(){
-					_this.getSong();
-				},299);
-				
+				// 获取歌曲信息
+				this.getSong();
 			},
 			// 更换歌曲，不需要调用this.show=true;
 			playWitch(id){
@@ -200,7 +197,10 @@ import $ from 'jquery'
 				
 			},
 			canPlay(){
-				this.state = this.pause;
+				this.state = this.pause
+				this.$store.commit('setCurrState',true);
+				document.getElementById('stick').className = '';
+				document.getElementsByClassName('changpian')[0].style.animationPlayState='running';
 			},
 			// 播放或者暂停
 			playOrPause(){
@@ -237,10 +237,15 @@ import $ from 'jquery'
 	                    callback()
 	                    clearInterval(timer)
 	                }
-	            }, 50)
+	            }, 10)
 	        },
 			// 通过歌曲ID获取歌曲信息，并根据url加载歌曲
 			getSong(){
+				// 将状态置位暂停
+				this.state = this.play
+				this.$store.commit('setCurrState',false);
+				document.getElementById('stick').className = 'pause';
+				document.getElementsByClassName('changpian')[0].style.animationPlayState='paused';
 				//获取歌曲
 				this.$http.get('http://120.79.167.62:3000/song/detail?ids='+this.id).then(res=>{
 					
@@ -398,7 +403,7 @@ import $ from 'jquery'
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background-image: url(../assets/img/timg.jpg);
+	background-image: url(../assets/img/placeholder_disk_play_song.png);
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: auto 95%;
