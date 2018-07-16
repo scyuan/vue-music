@@ -37,14 +37,13 @@ export default {
       this.$refs.play.playWitch(id);
     },
     check(){
-      var gg = document.documentElement;
-      var width = gg.clientWidth;
-
-      if(width>414){
+     
+      var isPhone = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)? true:false;
+      if(isPhone){
+        this.show = false;
+      }else{
         // 屏幕尺寸过大
         this.show = true;
-      }else{
-        this.show = false;
       }
     }
   },
