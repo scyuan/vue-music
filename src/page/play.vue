@@ -4,7 +4,7 @@
 		<div class="aaa">
 			<audio id='audio' v-bind:src="songUrl" autoplay @canplaythrough='canPlay()' @timeupdate='update()' @ended='end()'></audio>
 			<div class="bg-img"></div>
-			<div class="wrap-content">
+			<div class="wrap-content" @touchmove.prevent @scroll.prevent>
 				<div class="header">
 					<div class="back" @click='hideMe()'><i class="icon">&#xe622;</i></div>
 					<div class="title">
@@ -29,7 +29,7 @@
 					</div>
 					<!-- 歌曲歌词 -->
 					<div class="geci-div" v-show='geci'>
-						<div id="lrc"><p v-for='item in song_lrc'>{{item.lrc}}</p></div>
+						<div id="lrc" @touchmove.prevent @scroll.prevent><p v-for='item in song_lrc'>{{item.lrc}}</p></div>
 					</div>
 				</div>
 				<div class="do-area">
@@ -362,17 +362,6 @@ import $ from 'jquery'
 		mounted:function() {
 			//默认是暂停，因为要先加载歌曲
 			this.state = this.play;
-
-			var height = window.screen.height;
-
-			this.$refs.content.style.height = (height-208)+'px';
-
-			document.getElementsByClassName('wrap-content')[0].addEventListener('touchmove',function(e){
-				e.preventDefault();
-			},false)
-			document.getElementById('lrc').addEventListener('touchmove',function(e){
-				e.preventDefault();
-			},false)
 		}
 	}
 </script>
@@ -444,7 +433,11 @@ import $ from 'jquery'
 	font-size: 12px;
 }
 .content{
-	position: relative;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 49px;
+	bottom: 160px;
 }
 .bg-div,.geci-div{
 	width: 100%;
@@ -475,7 +468,7 @@ import $ from 'jquery'
 	position: relative;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	padding-top: 90px;
 	height: 100%;
 	width: 100%;
 }
@@ -527,6 +520,10 @@ import $ from 'jquery'
 }
 .do-area{
 	height: 160px;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
 .do-wrap{
 	width: 300px;

@@ -1,6 +1,6 @@
 <template>
 <transition name='slideUp'>
-	<div class="currentlist" v-show='show'>
+	<div class="currentlist" v-show='show' @touchmove.prevent @scroll.prevent>
 		<div class="content">
 			<div class="list-wrap">
 				<div class="top">
