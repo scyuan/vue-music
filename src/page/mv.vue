@@ -372,10 +372,6 @@
 .slide-enter-active,.slide-leave-active{
 	transition: all .3s;
 }
-.mv{
-	padding-bottom: 40px;
-	padding-top: 72px;
-}
 .mv-wrap{
 	height: 180px;
 	margin-bottom: 4px;

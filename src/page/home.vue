@@ -4,6 +4,10 @@
 		<div class="gedan-loading" ref='gedan_loading'  v-show='gedan_loading_show'>
 			<scale-loader :color="color"></scale-loader>
 		</div>
+		<div class="search">
+	        <label ref='search_input' for='search'>{{ placeholder }}</label>
+	        <input id='search' :placeholder="placeholder1" type="text" @focusin='focusin' @focusout='focusout'>
+	    </div>
 		<div class="lunbo">
 			
 			<swiper :options="swiperOption"  ref="mySwiper">  
@@ -18,15 +22,15 @@
 		</div>
 		
 		<div class="menu">
-			<div>
+			<div @click='goPath(0)'>
 				<i class="icon">&#xe68c;</i>
 				<p>发现音乐</p>
 			</div>
-			<div>
+			<div @click='goPath(1)'>
 				<i class="icon">&#xe631;</i>
 				<p>排行榜</p>
 			</div>
-			<div>
+			<div @click='goPath(2)'>
 				<i class="icon">&#xe632;</i>
 				<p>MV</p>
 			</div>
@@ -92,7 +96,9 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 		          // // 最左最右禁止滑动
 		          resistanceRatio : 0,
 		          
-	            }
+	            },
+	            placeholder:'🔍搜索歌名、歌手、专辑',
+      			placeholder1:'',
 			}
 		},
 		components:{
@@ -104,6 +110,35 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	        },
 	    }, 
 	    methods:{
+	    	focusin:function(){
+      
+		      this.$refs.search_input.style.left = '13%';
+		      var _this = this;
+		      setTimeout(function(){
+		        _this.placeholder = '🔍';
+		        _this.placeholder1 = '搜索歌名、歌手、专辑';
+		      },300);
+		    },
+		    focusout:function(){
+		      this.placeholder1 = '';
+		      this.$refs.search_input.style.left = '33%';
+		      this.placeholder = '🔍搜索歌名、歌手、专辑';
+		    },
+	    	goPath(index){
+	    		var url = '/';
+				switch(index){
+					case 0:
+						url = "/";
+						break;
+					case 1:
+						url =  "/topmusic";
+						break;
+					case 2:
+						url =  "/mv";
+						break;
+				}
+				this.$router.push({path:url});
+			},
 	    	scroll:function(){
 	    		console.log(document.getElementById('app').scrollTop);
 	    	},
@@ -188,7 +223,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	left: 0;
 	right: 0;
 	top: 0;
-	bottom: 48px;
+	bottom: 0;
 	z-index: 100;
 	background: #fff;
 	display: flex;
@@ -339,5 +374,41 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 }
 .recommend-gedan{
 	border-bottom: 1px solid #f1f1f1;
+}
+.search{
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+.search input{
+  width: 80%;
+  text-align: left;
+  height: 100%;
+  height: 36px;
+  border-radius: 100px;
+  outline: 0;
+  border: 0;
+  box-sizing: border-box;
+  padding: 0 7%;
+  background: rgba(255,255,255,0.7);
+}
+.search label{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 33%;
+  transition: all 0.3s;
+  color: #888;
+  font-size: 12px;
+}
+.recommend-song{
+	padding-bottom: 60px;
 }
 </style>

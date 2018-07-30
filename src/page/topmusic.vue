@@ -44,10 +44,6 @@
 	}
 </script>
 <style scoped>
-.topmusic{
-	padding-bottom: 40px;
-	padding-top: 72px;
-}
 .bangdan{
 	height: 100px;
 	width: 90%;

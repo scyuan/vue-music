@@ -4,10 +4,7 @@
       <p>请在移动端运行，抱歉</p>
       <p>谷歌浏览器请打开开发者工具并选择手机模式</p>
     </div>
-      <div class="search">
-        <label ref='search_input' for='search'>{{ placeholder }}</label>
-        <input id='search' :placeholder="placeholder1" type="text" @focusin='focusin' @focusout='focusout'>
-      </div>
+      
     
       <router-view v-on:listenplay='play'></router-view>
    
