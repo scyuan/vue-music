@@ -1,6 +1,6 @@
 <template>
 	<keep-alive>
-	<div class="home" ref='home'>
+	<div class="home" id='home' @touchmove='scroll'>
 		<div class="gedan-loading" ref='gedan_loading'  v-show='gedan_loading_show'>
 			<scale-loader :color="color"></scale-loader>
 		</div>
@@ -16,14 +16,29 @@
 			    <div class="swiper-pagination" slot="pagination"></div>  
 			</swiper>
 		</div>
+		
+		<div class="menu">
+			<div>
+				<i class="icon">&#xe68c;</i>
+				<p>发现音乐</p>
+			</div>
+			<div>
+				<i class="icon">&#xe631;</i>
+				<p>排行榜</p>
+			</div>
+			<div>
+				<i class="icon">&#xe632;</i>
+				<p>MV</p>
+			</div>
+		</div>
+
 		<div class="discover-wrap">
 			<div class="recommend-gedan">
-				<div class="xian">
-					<div class="gedan-title">
-						<i class="icon icon-gedan">&#xe64d;</i>
-						<span>每日推荐歌单</span>
-					</div>
+				
+				<div class="gedan-title">
+					<span class="icon">每日推荐歌单</span>
 				</div>
+				
 				<ul class="gedan-content clearfix" ref='gedan_content'>
 					
 					<li v-for='(item,index) in gedanList' >
@@ -34,12 +49,11 @@
 				</ul>
 			</div>
 			<div class="recommend-song">
-				<div class="xian">
-					<div class="gedan-title">
-						<i class="icon icon-gedan">&#xe64d;</i>
-						<span>每日推荐歌曲</span>
-					</div>
+				
+				<div class="gedan-title">
+					<span class="icon">每日推荐歌曲</span>
 				</div>
+				
 				<ul class="song-list">
 					<li v-for='(item,index) in songList'>
 						<songitem v-bind:song='item' v-bind:index='index' v-on:changesong='changesong'></songitem>
@@ -90,6 +104,9 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	        },
 	    }, 
 	    methods:{
+	    	scroll:function(){
+	    		console.log(document.getElementById('app').scrollTop);
+	    	},
 	    	parseToWan(int){
 	        	if(int>10000){
 	        		return Math.floor(int/10000)+'万';
@@ -170,7 +187,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	left: 0;
 	left: 0;
 	right: 0;
-	top: 72px;
+	top: 0;
 	bottom: 48px;
 	z-index: 100;
 	background: #fff;
@@ -180,7 +197,6 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 }
 .home{
 	padding-bottom: 40px;
-	padding-top: 72px;
 }
 .lunbo{
 	
@@ -203,7 +219,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	color: #ee4000;
 }
 .discover-wrap{
-	padding: 10px 0px;
+	padding:0px;
 }
 .xian{
 	height: 1px;
@@ -212,16 +228,10 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	position: relative;
 }
 .gedan-title{
-	position: absolute;
-	top: -14px;
-	left: 0px;
-	padding:0 5px;
-	display: inline-block;
-	height: 28px;
-	background-color: #fff;
-	color: #333;
-	line-height: 28px;
+	color: #000;
 	font-size: 15px;
+	font-weight: bold;
+	margin: 6px 0;
 }
 .gedan-content{
 	position: relative;
@@ -236,6 +246,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	width: 100%;
 	height: auto;
 	vertical-align: middle;
+	border-radius: 4px;
 }
 .gedan-content li p{
 	font-size: 12px;
@@ -277,5 +288,56 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
 	height: 10rem;
     background-color: #c2c2c2;
     width: 375px;
+}
+.menu{
+	height: 80px;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	border-bottom: 1px solid #f1f1f1;
+}
+.menu>div{
+	text-align: center;
+}
+.menu i{
+	width: 34px;
+	height: 34px;
+	border-radius: 17px;
+	display: inline-block;
+	background: linear-gradient(-45deg,rgba(255,0,0,1),rgba(255,0,0,0.6));
+	line-height: 34px;
+	color: #fff;
+}
+.menu p{
+	font-size: 12px;
+	margin-top: 5px;
+}
+.gedan-title::before{
+	content: '';
+	display: inline-block;
+	width: 10px;
+	height: 100%;
+}
+.gedan-title span{
+	display: inline-block;
+	position: relative;
+}
+.gedan-title span::before{
+	content: '';
+	display: inline-block;
+	width: 3px;
+	height: 100%;
+	position: absolute;
+	left: -10px;
+	top: 0;
+	background: rgb(255,0,0);
+}
+.gedan-title span::after{
+	content: '\e78b';
+
+	font-weight: normal;
+}
+.recommend-gedan{
+	border-bottom: 1px solid #f1f1f1;
 }
 </style>

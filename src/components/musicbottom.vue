@@ -8,9 +8,9 @@
 					<p class="singer">{{getSinger}}</p>
 				</div>
 				<div class="do">
-					<i class="icon icon-prev" @click='prev()'>&#xe610;</i>
+					<!-- <i class="icon icon-prev" @click='prev()'>&#xe610;</i> -->
 					<i class="icon icon-play" v-html='getIcon' @click='changeState()'></i>
-					<i class="icon" @click='next()'>&#xe611;</i>
+					<!-- <i class="icon" @click='next()'>&#xe611;</i> -->
 					<i class="icon icon-list" @click='getCurrentList()'>&#xe72f;</i>
 				</div>
 			</div>
@@ -95,11 +95,13 @@ import currentlist from './currentlist.vue'
 <style scoped>
 .bottom{
 	height: 48px;
-	width: 100%;
-	background: #ee4000;
+	width: 95%;
+	border-radius: 10px;
+	background: linear-gradient(45deg,rgb(255,100,100),rgb(255,0,0),rgb(255,100,100));
 	position: fixed;
-	bottom: 0;
-	left: 0;
+	bottom: 10px;
+	left: 50%;
+	transform: translateX(-50%);
 	padding: 0px 10px 0px 65px;
 	z-index: 22;
 }

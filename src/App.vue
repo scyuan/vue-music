@@ -4,7 +4,10 @@
       <p>请在移动端运行，抱歉</p>
       <p>谷歌浏览器请打开开发者工具并选择手机模式</p>
     </div>
-    <musicheader></musicheader>
+      <div class="search">
+        <label ref='search_input' for='search'>{{ placeholder }}</label>
+        <input id='search' :placeholder="placeholder1" type="text" @focusin='focusin' @focusout='focusout'>
+      </div>
     
       <router-view v-on:listenplay='play'></router-view>
    
@@ -23,10 +26,27 @@ export default {
   name: 'app',
   data(){
     return{
-      show:false
+      show:false,
+      placeholder:'🔍搜索歌名、歌手、专辑',
+      placeholder1:'',
     }
   },
   methods:{
+    
+    focusin:function(){
+      
+      this.$refs.search_input.style.left = '13%';
+      var _this = this;
+      setTimeout(function(){
+        _this.placeholder = '🔍';
+        _this.placeholder1 = '搜索歌名、歌手、专辑';
+      },300);
+    },
+    focusout:function(){
+      this.placeholder1 = '';
+      this.$refs.search_input.style.left = '33%';
+      this.placeholder = '🔍搜索歌名、歌手、专辑';
+    },
     play(id){
       this.$refs.play.showMe(id);
     },
@@ -79,11 +99,11 @@ div,body,*,ul,p,li{
 }
 @font-face {
   font-family: 'iconfont';  /* project id 478040 */
-  src: url('//at.alicdn.com/t/font_478040_752efa8h70ifi529.eot');
-  src: url('//at.alicdn.com/t/font_478040_752efa8h70ifi529.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_478040_752efa8h70ifi529.woff') format('woff'),
-  url('//at.alicdn.com/t/font_478040_752efa8h70ifi529.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_478040_752efa8h70ifi529.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_478040_iec5nx6wftn.eot');
+  src: url('//at.alicdn.com/t/font_478040_iec5nx6wftn.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_478040_iec5nx6wftn.woff') format('woff'),
+  url('//at.alicdn.com/t/font_478040_iec5nx6wftn.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_478040_iec5nx6wftn.svg#iconfont') format('svg');
 }
 .clearfix:after{
   content: ".";
@@ -101,7 +121,7 @@ div,body,*,ul,p,li{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .modal{
@@ -114,5 +134,38 @@ div,body,*,ul,p,li{
   z-index: 9999;
   text-align: center;
   padding-top: 300px;
+}
+.search{
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  height: 50px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+.search input{
+  width: 80%;
+  text-align: left;
+  height: 100%;
+  height: 36px;
+  border-radius: 100px;
+  outline: 0;
+  border: 0;
+  box-sizing: border-box;
+  padding: 0 7%;
+  background: rgba(255,255,255,0.7);
+}
+.search label{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 33%;
+  transition: all 0.3s;
+  color: #888;
+  font-size: 12px;
 }
 </style>

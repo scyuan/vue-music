@@ -1,8 +1,8 @@
 <template>
 	<div class="header">
-		<div class="title">
+		<!-- <div class="title">
 			<i class="icon icon-music">&#xe620;</i><span>{{title}}</span>
-		</div>
+		</div> -->
 		<div class="menu-bar">
 			<div class="menu-item menu-item-select" v-on:click='gopage(0)'>发现音乐</div>
 			<div class="menu-item" v-on:click='gopage(1)'>排行榜</div>
