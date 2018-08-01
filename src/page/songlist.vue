@@ -20,7 +20,7 @@
 			<div class="back" v-on:click='back()'>
 				<i class="icon">&#xe622;</i>
 			</div>
-			<p class="title">歌单</p>
+			<p class="title">{{name}}</p>
 			<div class="back">
 				
 			</div>
@@ -75,7 +75,7 @@ import ScaleLoader from 'vue-spinner/src/ScaleLoader'
 				
 				_this.name = res.data.playlist.name;
 				_this.gedanimg = res.data.playlist.coverImgUrl;
-				_this.creator_name = 'from  '+res.data.playlist.creator.nickname;
+				_this.creator_name = res.data.playlist.creator.nickname;
 				_this.$refs.gedanimg.style.backgroundImage='url('+res.data.playlist.coverImgUrl+')'
 				_this.$refs.avator.style.backgroundImage='url('+res.data.playlist.creator.avatarUrl+')'
 				_this.recommendCount = res.data.playlist.subscribedCount;
