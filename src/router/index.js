@@ -9,8 +9,8 @@ import play from '../page/play'
 Vue.use(Router)
 
 export default new Router({
-  routes: [
-    {
+  mode: 'history',
+  routes: [{
       path: '/',
       name: 'home',
       component: Home
@@ -26,9 +26,9 @@ export default new Router({
       component: mv
     },
     {
-      path:'/songlist',
-      name:'songlist',
-      component:songlist
+      path: '/songlist',
+      name: 'songlist',
+      component: songlist
     }
   ]
 })
