@@ -147,6 +147,7 @@ export default {
 }
 .top span:nth-child(1) {
   float: left;
+  font-size: 0.43rem;
 }
 .top span:nth-child(1) i {
   margin-right: 5px;
@@ -155,5 +156,6 @@ export default {
 }
 .top span:nth-child(2) {
   float: right;
+  font-size: 0.43rem;
 }
 </style>
