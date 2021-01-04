@@ -14,7 +14,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "axios": "^0.17.1",
+    "axios": "^0.21.1",
     "cnpm": "^6.0.0",
     "install": "^0.12.0",
     "jquery": "^3.3.1",
